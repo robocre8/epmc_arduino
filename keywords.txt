@@ -1,0 +1,19 @@
+#######################################
+# Datatypes (KEYWORD1)
+#######################################
+
+epmc KEYWORD1
+EPMC KEYWORD1
+
+#######################################
+# Methods and Functions (KEYWORD2)
+#######################################
+
+sendTargetVel KEYWORD2
+sendPwm KEYWORD2
+getMotorsPos  KEYWORD2
+getMotorsVel  KEYWORD2
+getMotorAData KEYWORD2
+getMotorBData KEYWORD2
+getMotorAMaxVel KEYWORD2
+getMotorBMaxVel KEYWORD2
