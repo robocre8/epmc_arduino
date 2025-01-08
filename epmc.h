@@ -18,6 +18,10 @@ public:
 
   bool sendPwm(int, int);
 
+  bool setCmdTimeout(int);
+
+  void getCmdTimeout(int &);
+
   void getMotorsPos(float &, float &);
 
   void getMotorsVel(float &, float &);

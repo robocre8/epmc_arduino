@@ -49,11 +49,18 @@ void setup()
   Serial.begin(115200);
 
   // wait for the driver module to fully setup (5 to 10 sec)
-  for (int i = 0; i <= 10; i += 1)
+  for (int i = 0; i <= 6; i += 1)
   {
     delayMs(1000);
     Serial.println(i);
   }
+  motor.sendPwm(0, 0); // pwmA, pwmB
+
+  // int cmd_vel_timeout = 2000;           // 0 to deactivate.
+  // motor.setCmdTimeout(cmd_vel_timeout); // set motor command velocity timeout
+  // motor.getCmdTimeout(cmd_vel_timeout); // get the stored command velocity timeout
+  // Serial.print("motor command vel timeout in ms: ");
+  // Serial.println(cmd_vel_timeout);
 
   motor.sendPwm(lowPwmVal, lowPwmVal); // pwmA, pwmB
   sendHigh = true;

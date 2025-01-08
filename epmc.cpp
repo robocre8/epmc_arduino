@@ -15,6 +15,21 @@ bool EPMC::sendPwm(int valA = 0, int valB = 0)
   return send("/pwm", valA, valB);
 }
 
+bool EPMC::setCmdTimeout(int timeout_ms = 0)
+{
+  return send("/timeout", timeout_ms, 0);
+}
+
+void EPMC::getCmdTimeout(int &timeout_ms)
+{
+  get("/timeout");
+
+  timeout_ms = valA;
+
+  valA = 0.0;
+  valB = 0.0;
+}
+
 void EPMC::getMotorsPos(float &angPosA, float &angPosB)
 {
   get("/pos");
