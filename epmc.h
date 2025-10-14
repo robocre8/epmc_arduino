@@ -1,12 +1,7 @@
 #ifndef EPMC_H
 #define EPMC_H
 
-#if ARDUINO >= 100
 #include <Arduino.h>
-#else
-#include <WProgram.h>
-#endif
-
 #include <Wire.h>
 
 class EPMC
@@ -14,40 +9,43 @@ class EPMC
 public:
   EPMC(int);
 
-  bool sendTargetVel(float, float);
+  void writeSpeed(float v0, float v1);
+  void writePWM(int pwm0, int pwm1);
+  void readPos(float &pos0, float &pos1);
+  void readVel(float &v0, float &v1);
+  void readUVel(float &v0, float &v1);
+  int setCmdTimeout(int timeout_ms);
+  int getCmdTimeout();
+  int setPidMode(int motor_no, int mode);
+  int getPidMode(int motor_no);
+  int clearDataBuffer();
+  void readMotorData(float &pos0, float &pos1, float &v0, float &v1);
 
-  bool sendPwm(int, int);
-
-  bool setCmdTimeout(int);
-
-  void getCmdTimeout(int &);
-
-  void getMotorsPos(float &, float &);
-
-  void getMotorsVel(float &, float &);
-
-  void getMotorAData(float &, float &);
-
-  void getMotorBData(float &, float &);
-
-  void getMotorAMaxVel(float &);
-
-  void getMotorBMaxVel(float &);
 
 private:
   int slaveAddr;
-  String dataMsg = "", dataMsgBuffer = "", dataBuffer[2];
-  float valA, valB;
+  void send_packet_without_payload(uint8_t cmd);
+  void write_data1(uint8_t cmd, uint8_t pos, float val);
+  void write_data2(uint8_t cmd, float val0, float val1);
+  void write_data4(uint8_t cmd, float val0, float val1, float val2, float val3);
+  float read_data1();
+  void read_data2(float &val0, float &val1);
+  void read_data4(float &val0, float &val1, float &val2, float &val3);
 
-  void get(String);
-
-  bool send(String, float, float);
-
-  void masterSendData(String);
-
-  String masterReceiveData();
-
-  String masterReceiveCharData();
+  //  Protocol Command IDs -------------
+  const uint8_t START_BYTE = 0xAA;
+  const uint8_t WRITE_VEL = 0x01;
+  const uint8_t WRITE_PWM = 0x02;
+  const uint8_t READ_POS = 0x03;
+  const uint8_t READ_VEL = 0x04;
+  const uint8_t READ_UVEL = 0x05;
+  const uint8_t SET_PID_MODE = 0x15;
+  const uint8_t GET_PID_MODE = 0x16;
+  const uint8_t SET_CMD_TIMEOUT = 0x17;
+  const uint8_t GET_CMD_TIMEOUT = 0x18;
+  const uint8_t READ_MOTOR_DATA = 0x2A;
+  const uint8_t CLEAR_DATA_BUFFER = 0x2C;
+  //---------------------------------------------
 };
 
 #endif

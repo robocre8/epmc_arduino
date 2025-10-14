@@ -13,8 +13,8 @@
 // Easy PID Motor Control i2c communication library
 #include <epmc.h>
 
-int epmcAddress = 1; // set this address to the same address you have during setup via the GUI app
-EPMC motor(epmcAddress);
+int i2c_address = 0x55; // set this address to the same address you have during setup via the GUI app
+EPMC epmc(i2c_address);
 
 ///////// my sepcial delay function ///////////////
 void delayMs(int ms)
@@ -26,19 +26,18 @@ void delayMs(int ms)
 }
 //////////////////////////////////////////////////
 
-bool isSuccessful;
-float angPosA, angPosB; // motorA, motorB (in rad)
-float angVelA, angVelB; // motorA, motorB (in rad/sec)
+float pos0, pos1; // (in rad)
+float v0, v1; // (in rad/sec)
 
-float lowTargetVel = -3.142;  // rad/sec
+float lowTargetVel = -3.142; // rad/sec
 float highTargetVel = 3.142; // rad/sec
 bool sendHigh = true;
 
 long prevTime;
-long sampleTime = 100; // millisec
+long sampleTime = 20; // millisec
 
 long ctrlPrevTime;
-long ctrlSampleTime = 5000; // millisec
+long ctrlSampleTime = 4000; // millisec
 
 void setup()
 {
@@ -48,20 +47,22 @@ void setup()
   // setup serial communication to print result on serial minitor
   Serial.begin(115200);
 
-  // wait for the driver module to fully setup (5 to 10 sec)
-  for (int i = 0; i <= 6; i += 1)
+  for (int i = 0; i < 4; i += 1)
   {
     delayMs(1000);
+    Serial.print("configuring controller: ");
     Serial.println(i);
   }
-  motor.sendTargetVel(0.00, 0.00); // targetA, targetB
-  // int cmd_vel_timeout = 2000; // 0 to deactivate.
-  // motor.setCmdTimeout(cmd_vel_timeout); // set motor command velocity timeout
-  // motor.getCmdTimeout(cmd_vel_timeout); // get the stored command velocity timeout
-  // Serial.print("motor command vel timeout in ms: ");
-  // Serial.println(cmd_vel_timeout);
 
-  motor.sendTargetVel(lowTargetVel, lowTargetVel); // targetA, targetB
+  epmc.clearDataBuffer();
+  epmc.writeSpeed(0.0, 0.0);
+
+  int cmd_vel_timeout = 5000; // 0 to deactivate.
+  epmc.setCmdTimeout(cmd_vel_timeout); // set motor command velocity timeout
+  cmd_vel_timeout = epmc.getCmdTimeout(); // get the stored command velocity timeout
+  Serial.print("motor command vel timeout in ms: ");
+  Serial.println(cmd_vel_timeout);
+
   sendHigh = true;
 
   prevTime = millis();
@@ -74,12 +75,12 @@ void loop()
   {
     if (sendHigh)
     {
-      motor.sendTargetVel(highTargetVel, highTargetVel); // targetA, targetB
+      epmc.writeSpeed(highTargetVel, highTargetVel);
       sendHigh = false;
     }
     else
     {
-      motor.sendTargetVel(lowTargetVel, lowTargetVel); // targetA, targetB
+      epmc.writeSpeed(lowTargetVel, lowTargetVel);
       sendHigh = true;
     }
     ctrlPrevTime = millis();
@@ -89,18 +90,20 @@ void loop()
   {
     /* CODE SHOULD GO IN HERE*/
 
-    motor.getMotorsPos(angPosA, angPosB); // gets angPosA, angPosB
-    motor.getMotorsVel(angVelA, angVelB); // gets angVelA, angVelB
+    // epmc.readPos(pos0, pos1);
+    // epmc.readVel(v0, v1);
 
-    Serial.print(angPosA, 3);
-    Serial.print(", ");
-    Serial.println(angVelA, 3);
+    epmc.readMotorData(pos0, pos1, v0, v1);
 
-    Serial.print(angPosB, 3);
-    Serial.print(", ");
-    Serial.println(angVelB, 3);
-
-    Serial.println();
+    // Print results
+    Serial.println("-----------------------------------");
+    Serial.print("Motor A: ");
+    Serial.print(pos0); Serial.print("\t"); Serial.println(v0, 4);
+    Serial.print("Motor B: ");
+    Serial.print(pos1); Serial.print("\t"); Serial.println(v1, 4);
+    Serial.println("------------------------------------");
+    
+    // Serial.println();
 
     prevTime = millis();
   }
