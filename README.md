@@ -7,7 +7,7 @@ A simple way to get started is simply to try out and follow the example code
 
 
 ## How to Use the Library
-- Ensure you have the **`Easy PID Motor Controller Module`** (i.e **`L298N EPMC Module`**). Calibrate it and set it up using the **`epmc_setup_application`**.
+- Ensure you have the **`Easy PID Motor Controller Module`**. Calibrate it and set it up using the **`epmc_setup_application`**.
 
 - Download download the library by clicking on the green Code button above (or clone it)
   > if you download it, extract it and change the folder name to `epmc_arduino`
@@ -26,29 +26,27 @@ A simple way to get started is simply to try out and follow the example code
 
 ## Basic Library functions and usage
 
-- initialize the EPMC i2c communication by creating an object
-  > `EPMC` motor(epmc_i2c_address)
+- connect to epmc_driver shield module
+  > EPMC epmc(i2c_address)
+  > .clearDataBuffer()
 
 - send target angular velocity command
-  > motor.`sendTargetVel`(motorATargetVel, motorBTargetVel)
+  > .writeSpeed(motor0_TargetVel, motor1_TargetVel)
 
 - send PWM command
-  > motor.`sendPwm`(motorA_PWM, motorB_PWM)
+  > .writePWM(motor0_PWM, motor1_PWM)
+
+- set motor command timeout
+  > .setCmdTimeout(timeout_ms)
+
+- get motor command timeout
+  > .getCmdTimeout() # returns motor command timeout in ms
 
 - read motors angular position
-  > motor.`getMotorsPos`(&angPosA, &angPosB) // gets and copies the motors A and B angular position into angPosA, angPosB
+  > .readPos() # returns angPos0, angPos1
 
 - read motors angular velocity
-  > motor.`getMotorsVel`(&angVelA, &angVelB) // gets and copies the motors A and B angular velocity angVelA, angVelB
-
-- read motorA angular position and velocity together
-  > motor.`getMotorAData`(&angPosA, &angVelA) // gets and copies the motorA ang pos and vel into angPosA, angVelA
-
-- read motorB angular position and velocity together
-  > motor.`getMotorBData`(&angPosB, &angVelB) // gets and copies the motorB ang pos and vel into angPosB, angVelB
+  > .readVel() # returns angVel0, angVel1
 
 - read motorA maximum commandable angular velocity
-  > motor.`getMotorAData`(&maxVelA)
-
-- read motorB maximum commandable angular velocity
-  > motor.`getMotorBData`(&maxVelB)
+  > .getMaxVel(motor_no) # returns maxVel0 or maxVel1 based on the specified motor number

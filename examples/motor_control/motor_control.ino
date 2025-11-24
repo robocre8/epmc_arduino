@@ -26,18 +26,21 @@ void delayMs(int ms)
 }
 //////////////////////////////////////////////////
 
-float pos0, pos1; // (in rad)
-float v0, v1; // (in rad/sec)
+// [4 rev/sec, 2 rev/sec, 1 rev/sec, 0.5 rev/sec]
+float targetVel[] = {1.571, 3.142, 6.284, 12.568}; // in rad/sec
+float vel = targetVel[2]; // in rad/sec
+float v = 0.0;
 
-float lowTargetVel = -3.142; // rad/sec
-float highTargetVel = 3.142; // rad/sec
+float pos0, pos1;
+float vel0, vel1;
+
 bool sendHigh = true;
 
-long prevTime;
-long sampleTime = 20; // millisec
+long readTime;
+long readTimeInterval = 15; // millisec
 
-long ctrlPrevTime;
-long ctrlSampleTime = 4000; // millisec
+long cmdTime;
+long cmdTimeInterval = 5000; // millisec
 
 void setup()
 {
@@ -47,17 +50,17 @@ void setup()
   // setup serial communication to print result on serial minitor
   Serial.begin(115200);
 
-  for (int i = 0; i < 4; i += 1)
-  {
-    delayMs(1000);
-    Serial.print("configuring controller: ");
-    Serial.println(i);
+  for (int i=0; i<4; i+=1){
+    delay(1000);
+    Serial.print("waiting for epmc controller: ");
+    Serial.print(i+1);
+    Serial.println(" sec");
   }
 
   epmc.clearDataBuffer();
-  epmc.writeSpeed(0.0, 0.0);
+  epmc.writeSpeed(v, v);
 
-  int cmd_vel_timeout = 5000; // 0 to deactivate.
+  int cmd_vel_timeout = 10000; // 0 to deactivate.
   epmc.setCmdTimeout(cmd_vel_timeout); // set motor command velocity timeout
   cmd_vel_timeout = epmc.getCmdTimeout(); // get the stored command velocity timeout
   Serial.print("motor command vel timeout in ms: ");
@@ -65,46 +68,45 @@ void setup()
 
   sendHigh = true;
 
-  prevTime = millis();
-  ctrlPrevTime = millis();
+  readTime = millis();
+  cmdTime = millis();
 }
 
 void loop()
 {
-  if ((millis() - ctrlPrevTime) >= ctrlSampleTime)
+  if ((millis() - cmdTime) >= cmdTimeInterval)
   {
     if (sendHigh)
     {
-      epmc.writeSpeed(highTargetVel, highTargetVel);
+      v = vel;
+      // epmc.writeSpeed(v, v);
+      vel *= -1;
       sendHigh = false;
     }
     else
     {
-      epmc.writeSpeed(lowTargetVel, lowTargetVel);
+      v = 0.0;
+      // epmc.writeSpeed(v, v);
       sendHigh = true;
     }
-    ctrlPrevTime = millis();
+    cmdTime = millis();
   }
 
-  if ((millis() - prevTime) >= sampleTime)
+  if ((millis() - readTime) >= readTimeInterval)
   {
-    /* CODE SHOULD GO IN HERE*/
-
-    // epmc.readPos(pos0, pos1);
-    // epmc.readVel(v0, v1);
-
-    epmc.readMotorData(pos0, pos1, v0, v1);
+    epmc.writeSpeed(v, v);
+    epmc.readMotorData(pos0, pos1, vel0, vel1);
 
     // Print results
     Serial.println("-----------------------------------");
-    Serial.print("Motor A: ");
-    Serial.print(pos0); Serial.print("\t"); Serial.println(v0, 4);
-    Serial.print("Motor B: ");
-    Serial.print(pos1); Serial.print("\t"); Serial.println(v1, 4);
+    Serial.print("Motor 0: ");
+    Serial.print(pos0, 2); Serial.print("\t"); Serial.println(vel0, 4);
+    Serial.print("Motor 1: ");
+    Serial.print(pos1, 2); Serial.print("\t"); Serial.println(vel1, 4);
     Serial.println("------------------------------------");
     
     // Serial.println();
 
-    prevTime = millis();
+    readTime = millis();
   }
 }
