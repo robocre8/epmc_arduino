@@ -43,10 +43,10 @@ A simple way to get started is simply to try out and follow the example code
   > .getCmdTimeout() # returns motor command timeout in ms
 
 - read motors angular position
-  > .readPos() # returns angPos0, angPos1
+  > .readPos(&motor0_angPos, &motor1_angPos) # returns angPos0, angPos1
 
 - read motors angular velocity
-  > .readVel() # returns angVel0, angVel1
+  > .readVel(&motor0_angVel, &motor1_angVel) # returns angVel0, angVel1
 
 - read motorA maximum commandable angular velocity
   > .getMaxVel(motor_no) # returns maxVel0 or maxVel1 based on the specified motor number
