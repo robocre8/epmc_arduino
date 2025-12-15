@@ -79,14 +79,14 @@ void loop()
     if (sendHigh)
     {
       v = vel;
-      // epmc.writeSpeed(v, v);
+      epmc.writeSpeed(v, v);
       vel *= -1;
       sendHigh = false;
     }
     else
     {
       v = 0.0;
-      // epmc.writeSpeed(v, v);
+      epmc.writeSpeed(v, v);
       sendHigh = true;
     }
     cmdTime = millis();
@@ -94,7 +94,7 @@ void loop()
 
   if ((millis() - readTime) >= readTimeInterval)
   {
-    epmc.writeSpeed(v, v);
+    // epmc.writeSpeed(v, v);
     epmc.readMotorData(pos0, pos1, vel0, vel1);
 
     // Print results

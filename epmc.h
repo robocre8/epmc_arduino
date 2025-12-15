@@ -13,11 +13,10 @@ public:
   void writePWM(int pwm0, int pwm1);
   void readPos(float &pos0, float &pos1);
   void readVel(float &v0, float &v1);
-  void readUVel(float &v0, float &v1);
-  bool setCmdTimeout(int timeout_ms);
+  void setCmdTimeout(int timeout_ms);
   float getMaxVel(int motor_no);
   int getCmdTimeout();
-  bool setPidMode(int mode);
+  void setPidMode(int mode);
   int getPidMode();
   bool clearDataBuffer();
   void readMotorData(float &pos0, float &pos1, float &v0, float &v1);
@@ -26,7 +25,7 @@ public:
 private:
   int slaveAddr;
   void send_packet_without_payload(uint8_t cmd);
-  void write_data1(uint8_t cmd, uint8_t pos, float val);
+  void write_data1(uint8_t cmd, float val=0.0, uint8_t pos=100);
   void write_data2(uint8_t cmd, float val0, float val1);
   void read_data1(float &val0);
   void read_data2(float &val0, float &val1);

@@ -15,7 +15,7 @@ uint8_t computeChecksum(uint8_t *packet, uint8_t length) {
 
 void EPMC::send_packet_without_payload(uint8_t cmd)
 {
-  // Build packet: start_byte + cmd + length + pos + float + checksum
+  // Build packet: start_byte + cmd + length + checksum
   uint8_t packet[4];
   packet[0] = START_BYTE;
   packet[1] = cmd;
@@ -30,7 +30,7 @@ void EPMC::send_packet_without_payload(uint8_t cmd)
   Wire.endTransmission(true);
 }
 
-void EPMC::write_data1(uint8_t cmd, uint8_t pos, float val)
+void EPMC::write_data1(uint8_t cmd, float val=0.0, uint8_t pos=100)
 {
   // Build packet: start_byte + cmd + length + pos + float + checksum
   uint8_t packet[1 + 1 + 1 + 1 + 4 + 1];
@@ -131,49 +131,40 @@ void EPMC::readVel(float &v0, float &v1){
   read_data2(v0, v1);
 }
 
-void EPMC::readUVel(float &v0, float &v1){
-  send_packet_without_payload(READ_UVEL);
-  read_data2(v0, v1);
-}
-
 float EPMC::getMaxVel(int motor_no){
   float max_vel;
-  write_data1(GET_MAX_VEL, motor_no, 0.0);
+  write_data1(GET_MAX_VEL, 0.0, motor_no);
   read_data1(max_vel);
   return max_vel;
 }
 
-bool EPMC::setCmdTimeout(int timeout_ms){
+void EPMC::setCmdTimeout(int timeout_ms){
   float res;
-  write_data1(SET_CMD_TIMEOUT, 100, (float)timeout_ms);
-  read_data1(res);
-  return ((int)res == 1);
+  write_data1(SET_CMD_TIMEOUT, (float)timeout_ms);
 }
 
 int EPMC::getCmdTimeout(){
   float timeout_ms;
-  write_data1(GET_CMD_TIMEOUT, 100, 0.0);
+  write_data1(GET_CMD_TIMEOUT);
   read_data1(timeout_ms);
   return (int)timeout_ms;
 }
 
-bool EPMC::setPidMode(int mode){
+void EPMC::setPidMode(int mode){
   float res;
-  write_data1(SET_PID_MODE, 100, (float)mode);
-  read_data1(res);
-  return ((int)res == 1);
+  write_data1(SET_PID_MODE, (float)mode);
 }
 
 int EPMC::getPidMode(){
   float mode;
-  write_data1(GET_PID_MODE, 100, 0.0);
+  write_data1(GET_PID_MODE);
   read_data1(mode);
   return (int)mode;
 }
 
 bool EPMC::clearDataBuffer(){
   float res;
-  write_data1(CLEAR_DATA_BUFFER, 0, 0.0);
+  write_data1(CLEAR_DATA_BUFFER);
   read_data1(res);
   return ((int)res == 1);
 }
