@@ -139,7 +139,6 @@ float EPMC::getMaxVel(int motor_no){
 }
 
 void EPMC::setCmdTimeout(int timeout_ms){
-  float res;
   write_data1(SET_CMD_TIMEOUT, (float)timeout_ms);
 }
 
@@ -151,7 +150,6 @@ int EPMC::getCmdTimeout(){
 }
 
 void EPMC::setPidMode(int mode){
-  float res;
   write_data1(SET_PID_MODE, (float)mode);
 }
 
