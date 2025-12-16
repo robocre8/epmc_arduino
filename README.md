@@ -28,25 +28,29 @@ A simple way to get started is simply to try out and follow the example code
 
 - connect to epmc_driver shield module
   > EPMC epmc(i2c_address)
-  > .clearDataBuffer()
+  >
+  > epmc.clearDataBuffer() # returns bool -> success
 
 - send target angular velocity command
-  > .writeSpeed(motor0_TargetVel, motor1_TargetVel)
+  > epmc.writeSpeed(motor0_TargetVel, motor1_TargetVel)
 
 - send PWM command
-  > .writePWM(motor0_PWM, motor1_PWM)
+  > epmc.writePWM(motor0_PWM, motor1_PWM)
 
 - set motor command timeout
-  > .setCmdTimeout(timeout_ms)
+  > epmc.setCmdTimeout(timeout_ms)
 
 - get motor command timeout
-  > .getCmdTimeout() # returns motor command timeout in ms
+  > epmc.getCmdTimeout() # returns int -> motor command timeout in ms
 
 - read motors angular position
-  > .readPos(&motor0_angPos, &motor1_angPos) # returns angPos0, angPos1
+  > epmc.readPos(&motor0_angPos, &motor1_angPos)
 
 - read motors angular velocity
-  > .readVel(&motor0_angVel, &motor1_angVel) # returns angVel0, angVel1
+  > epmc.readVel(&motor0_angVel, &motor1_angVel)
+
+- read motors angular position and velocity all at once
+  > epmc.readMotorData(float &pos0, float &pos1, float &v0, float &v1)
 
 - read motorA maximum commandable angular velocity
-  > .getMaxVel(motor_no) # returns maxVel0 or maxVel1 based on the specified motor number
+  > epmc.getMaxVel(motor_no) # returns float -> maxVel0 or maxVel1 based on the specified motor number
