@@ -47,10 +47,7 @@ A simple way to get started is simply to try out and follow the example code
   > epmc.readPos(&motor0_angPos, &motor1_angPos)
 
 - read motors angular velocity
-  > epmc.readVel(&motor0_angVel, &motor1_angVel)
-
-- read motors angular position and velocity all at once
-  > epmc.readMotorData(float &pos0, float &pos1, float &v0, float &v1)
+  > epmc.readSpeed(&motor0_angVel, &motor1_angVel)
 
 - read motorA maximum commandable angular velocity
-  > epmc.getMaxVel(motor_no) # returns float -> maxVel0 or maxVel1 based on the specified motor number
+  > epmc.getMaxSpeed(motor_no) # returns float -> maxVel0 or maxVel1 based on the specified motor number
