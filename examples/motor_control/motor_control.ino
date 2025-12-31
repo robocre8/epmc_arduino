@@ -95,7 +95,8 @@ void loop()
   if ((millis() - readTime) >= readTimeInterval)
   {
     // epmc.writeSpeed(v, v);
-    epmc.readMotorData(pos0, pos1, vel0, vel1);
+    epmc.readPos(pos0, pos1);
+    epmc.readSpeed(vel0, vel1);
 
     // Print results
     Serial.println("-----------------------------------");
