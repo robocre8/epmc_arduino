@@ -7,7 +7,6 @@ EPMC::EPMC(int slave_addr)
 
 void EPMC::send(float cmd, float arg1=0.0, float arg2=0.0)
 {
-  // Build packet: start_byte + cmd + length + float*4 + checksum
   uint8_t packet[12];
   memcpy(&packet[0], &cmd, sizeof(float));
   memcpy(&packet[4], &arg1, sizeof(float));
